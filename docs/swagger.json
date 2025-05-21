@@ -1,0 +1,114 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Service for processing arithmetic instructions",
+        "title": "Calculator API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/calculate": {
+            "post": {
+                "description": "Accepts JSON array of instructions (calc/print) and returns results",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "calculator"
+                ],
+                "summary": "Process calculation instructions",
+                "parameters": [
+                    {
+                        "description": "Calculation instructions",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/calculator-service_internal_domain.Instruction"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation results",
+                        "schema": {
+                            "$ref": "#/definitions/calculator-service_internal_domain.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "calculator-service_internal_domain.Instruction": {
+            "type": "object",
+            "x-order": [ "type", "op", "var", "left", "right" ],
+            "properties": {
+                "type": {
+                    "description": "Type of instruction\nrequired: true\nenum: calc,print\nexample: calc\n@x-order type,op,var,left,right",
+                    "type": "string"
+                },
+                "op": {
+                    "description": "Operation type (for calc instructions)\nenum: +,-,*,/,^,√\nexample: +",
+                    "type": "string"
+                },
+                "var": {
+                    "description": "Variable name\nrequired: true\nexample: x",
+                    "type": "string"
+                },
+                "left": {
+                    "description": "Left operand (number or variable name)\nrequired: true\nexample: 10"
+                },
+
+                "right": {
+                    "description": "Right operand (number or variable name, omit for unary operations)\nexample: 5"
+                }
+            }
+        },
+        "calculator-service_internal_domain.PrintResult": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "description": "Calculated value",
+                    "type": "number"
+                },
+                "var": {
+                    "description": "Variable name",
+                    "type": "string"
+                }
+            }
+        },
+        "calculator-service_internal_domain.Response": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "List of print results",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/calculator-service_internal_domain.PrintResult"
+                    }
+                }
+            }
+        }
+    }
+}

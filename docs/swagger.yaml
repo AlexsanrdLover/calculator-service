@@ -1,0 +1,91 @@
+basePath: /
+definitions:
+  calculator-service_internal_domain.Instruction:
+    properties:
+      left:
+        description: |-
+          Left operand (number or variable name)
+          required: true
+          example: 10
+      op:
+        description: |-
+          Operation type (for calc instructions)
+          enum: +,-,*,/,^,√
+          example: +
+        type: string
+      right:
+        description: |-
+          Right operand (number or variable name, omit for unary operations)
+          example: 5
+      type:
+        description: |-
+          Type of instruction
+          required: true
+          enum: calc,print
+          example: calc
+          @x-order type,op,var,left,right
+        type: string
+      var:
+        description: |-
+          Variable name
+          required: true
+          example: x
+        type: string
+    type: object
+  calculator-service_internal_domain.PrintResult:
+    properties:
+      value:
+        description: Calculated value
+        type: number
+      var:
+        description: Variable name
+        type: string
+    type: object
+  calculator-service_internal_domain.Response:
+    properties:
+      items:
+        description: List of print results
+        items:
+          $ref: '#/definitions/calculator-service_internal_domain.PrintResult'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Service for processing arithmetic instructions
+  title: Calculator API
+  version: "1.0"
+paths:
+  /calculate:
+    post:
+      consumes:
+      - application/json
+      description: Accepts JSON array of instructions (calc/print) and returns results
+      parameters:
+      - description: Calculation instructions
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/calculator-service_internal_domain.Instruction'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Calculation results
+          schema:
+            $ref: '#/definitions/calculator-service_internal_domain.Response'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Process calculation instructions
+      tags:
+      - calculator
+swagger: "2.0"

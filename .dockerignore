@@ -1,0 +1,8 @@
+.git
+.vscode
+.vs
+.idea
+*.md
+*.txt
+bin/
+tmp/

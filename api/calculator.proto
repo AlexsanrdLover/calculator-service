@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package api;
+option go_package = "calculator-service/api";
+
+service Calculator {
+  rpc Calculate (CalculationRequest) returns (CalculationResponse);
+}
+
+message CalculationRequest {
+  repeated Instruction instructions = 1;
+}
+
+message CalculationResponse {
+  repeated PrintResult items = 1;
+}
+
+message Instruction {
+  string type = 1;
+  string op = 2;
+  string var = 3;
+  oneof left {
+    double left_num = 4;
+    string left_var = 5;
+  }
+  oneof right {
+    double right_num = 6;
+    string right_var = 7;
+  }
+}
+
+message PrintResult {
+  string var = 1;
+  double value = 2;
+}
